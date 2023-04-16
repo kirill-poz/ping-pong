@@ -26,7 +26,7 @@ win_height = 500
 window = display.set_mode((win_width, win_height))
 window.fill(back)
 background = transform.scale(image.load("background.jpg"), (win_width, win_height))
-ball = Enemy('2521.png', win_width - 80, 280, 2)
+ball = Enemy('2521548.png', win_width - 80, 280, 2)
 game = True
 finish = False
 clock = time.Clock()
