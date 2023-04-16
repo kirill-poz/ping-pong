@@ -25,7 +25,6 @@ win_width = 600
 win_height = 500
 window = display.set_mode((win_width, win_height))
 window.fill(back)
-background = transform.scale(image.load("background.jpg"), (win_width, win_height))
 ball = Enemy('2521548.png', win_width - 80, 280, 2)
 game = True
 finish = False
@@ -39,6 +38,5 @@ while game:
         window.blit(background,(0, 0))
         clock.tick(FPS)
         player.update()
-        
         player.reset()
         
