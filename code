@@ -2,7 +2,7 @@ from pygame import *
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_speed):
         super().__init__()
-        self.image = transform.scale(image.load(player_image), (65, 65))
+        self.image = transform.scale(image.load(player_image), (win_width, win_height))
         self.speed = player_speed
         self.rect = self.image.get_rect()
         self.rect.x = player_x
@@ -20,12 +20,25 @@ class Player(GameSprite):
             self.rect.y += self.speed
         if keys_pressed[K_d] and self.rect.x < win_width - 80:
             self.rect.x += self.speed
+class Enemy(GameSprite):
+    def __init__(self, player_image, player_x, player_y, player_speed):
+	    super().__init__(player_image, player_x, player_y, player_speed)
+    def update(self):
+        global direction
+        if self.rect.x <= 470:
+            direction = "right"
+        if self.rect.x >= win_width - 85:
+            direction = "left"
+        if direction == "left":
+            self.rect.x -= self.speed
+        else:
+            self.rect.x += self.speed
 back = (200, 180, 160)
 win_width = 600
 win_height = 500
 window = display.set_mode((win_width, win_height))
 window.fill(back)
-ball = Enemy('2521548.png', win_width - 80, 280, 2)
+ball = Enemy('ball.png', win_width - 80, 280, 2)
 game = True
 finish = False
 clock = time.Clock()
