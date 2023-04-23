@@ -1,45 +1,65 @@
 from pygame import *
+
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_speed):
         super().__init__()
-        self.image = transform.scale(image.load(player_image), (win_width, win_height))
-        self.speed = player_speed
+        self.image = transform.scale(image.load(player_image), (65, 65))
+        self.speed_x = player_speed
+        self.speed_y = player_speed
         self.rect = self.image.get_rect()
         self.rect.x = player_x
         self.rect.y = player_y
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
-class Player(GameSprite): 
+class Player_1(GameSprite): 
     def update(self): 
         keys_pressed = key.get_pressed()
         if keys_pressed[K_w] and self.rect.y > 5:
-            self.rect.y -= self.speed
-        if keys_pressed[K_a] and self.rect.x > 5:
-            self.rect.x -= self.speed
+            self.rect.y -= self.speed_y
         if keys_pressed[K_s] and self.rect.y < win_height - 80:
-            self.rect.y += self.speed
-        if keys_pressed[K_d] and self.rect.x < win_width - 80:
-            self.rect.x += self.speed
+            self.rect.y += self.speed_y
+class Player_2(GameSprite): 
+    def update(self): 
+        keys_pressed = key.get_pressed()
+        if keys_pressed[K_UP] and self.rect.y > 5:
+            self.rect.y -= self.speed_y
+        if keys_pressed[K_DOWN] and self.rect.y < win_height - 80:
+            self.rect.y += self.speed_y
 class Enemy(GameSprite):
-    def __init__(self, player_image, player_x, player_y, player_speed):
-	    super().__init__(player_image, player_x, player_y, player_speed)
     def update(self):
-        global direction
-        if self.rect.x <= 470:
-            direction = "right"
-        if self.rect.x >= win_width - 85:
-            direction = "left"
-        if direction == "left":
-            self.rect.x -= self.speed
-        else:
-            self.rect.x += self.speed
-back = (200, 180, 160)
+        self.rect.y += self.speed_y
+        self.rect.x += self.speed_x
+        if sprite.collide_rect(ball, wall_1):
+            self.speed_x = -1.1*self.speed_x
+        if sprite.collide_rect(ball, wall_2):
+            self.speed_x = -1.1*self.speed_x
+        if self.rect.y < 0:
+            self.speed_y = -1.1*self.speed_y
+        if self.rect.y > 450:
+            self.speed_y = -1.1*self.speed_y
+        if self.rect.x < -20:
+            lose = font_big.render('Loser Player 1!', True, (251, 16, 190))  
+            window.blit(lose, (150, 150))
+            finish = True
+        if self.rect.x > 600:
+            lose = font_big.render('Loser Player 2!', True, (251, 16, 190))  
+            window.blit(lose, (150, 150))
+            finish = True
+        
+back = (255, 255, 255)
 win_width = 600
 win_height = 500
 window = display.set_mode((win_width, win_height))
 window.fill(back)
-ball = Enemy('ball.png', win_width - 80, 280, 2)
+font.init()
+font_small = font.SysFont('Arial', 30)
+font_big = font.SysFont('Arial', 70)
+wall_1 = Player_1('w.png', win_width-80, 280, 5)
+wall_2 = Player_2('w.png', win_width-580, 280, 5)
+ball = Enemy('ball.png', win_width-300, 250, 2)
+
 game = True
+global finish
 finish = False
 clock = time.Clock()
 FPS = 60
@@ -48,8 +68,13 @@ while game:
         if e.type == QUIT:
             game = False 
     if finish != True:
-        window.blit(background,(0, 0))
+        window.fill(back)
+        ball.reset()
+        wall_1.reset()
+        wall_2.reset()
+        ball.update()
+        wall_1.update()
+        wall_2.update()
         clock.tick(FPS)
-        player.update()
-        player.reset()
+        display.update()
         
